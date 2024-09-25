@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Fundraisers</title>
+</head>
+<body>
+    <header>
+        <h1>Search Active Fundraisers</h1>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="search.html">Search Fundraisers</a>
+        </nav>
+    </header>
+    
+    <section>
+        <form id="search-form">
+            <label for="category">Category:</label>
+            <input type="text" id="category" name="category">
+
+            <label for="organizer">Organizer:</label>
+            <input type="text" id="organizer" name="organizer">
+
+            <label for="city">City:</label>
+            <input type="text" id="city" name="city">
+            
+            <button type="submit">Search</button>
+        </form>
+        
+        <div id="search-results"></div>
+    </section>
+
+    <script>
+        document.getElementById('search-form').addEventListener('submit', function (e) {
+            e.preventDefault(); // Prevent form submission from refreshing the page
+
+            // Get the values from the form inputs
+            let city = document.querySelector('input[name="city"]').value;
+            let organizer = document.querySelector('input[name="organizer"]').value;
+
+            // Prepare the search data
+            const searchData = {
+                city: city,
+                organizer: organizer
+            };
+
+            // Send the search request to the backend
+            fetch('/api/search_fundraisers', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(searchData) // Send the search data as JSON
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Clear previous search results
+                let resultsDiv = document.getElementById('search-results');
+                resultsDiv.innerHTML = '';
+
+                if (data.length === 0) {
+                    // If no fundraisers are found, display a message
+                    resultsDiv.innerHTML = '<p>No fundraisers found.</p>';
+                } else {
+                    // Loop through the returned data and display it
+                    let html = '';
+                    data.forEach(fundraiser => {
+                        html += `
+                            <div>
+                                <h3><a href="fundraiser-details.html?id=${fundraiser.FUNDRAISER_ID}">
+                                    ${fundraiser.caption}
+                                </a></h3>
+                                <p>Organizer: ${fundraiser.organizer}</p>
+                                <p>City: ${fundraiser.city}</p>
+                                <p>Target Funding: $${fundraiser.target_funding}</p>
+                            </div>
+                            <hr>
+                        `;
+                    });
+                    resultsDiv.innerHTML = html; // Insert the generated HTML
+                }
+            })
+            .catch(err => {
+                console.error('Error fetching search results:', err);
+                document.getElementById('search-results').innerHTML = '<p>Error fetching search results.</p>';
+            });
+        });
+    </script>
+</body>
+</html>

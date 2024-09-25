@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fundraiser Details</title>
+</head>
+<body>
+    <h1>Fundraiser Details</h1>
+    
+    <!-- Section to display fundraiser details -->
+    <div id="fundraiser-details"></div>
+
+    <!-- Link back to home page -->
+    <a href="index.html">Back to Home</a>
+
+    <script>
+        // Get the fundraiser ID from the URL query parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const fundraiserId = urlParams.get('id');  // e.g., ?id=1
+
+        // Fetch the details of the fundraiser by ID
+        fetch(`/api/fundraiser/${fundraiserId}`)
+            .then(response => response.json())
+            .then(data => {
+                // Display the fundraiser details in the div
+                const detailsDiv = document.getElementById('fundraiser-details');
+                const details = `
+                    <h2>${data.caption}</h2>
+                    <p><strong>Organizer:</strong> ${data.organizer}</p>
+                    <p><strong>City:</strong> ${data.city}</p>
+                    <p><strong>Target Funding:</strong> $${data.target_funding}</p>
+                    <p><strong>Current Funding:</strong> $${data.current_funding}</p>
+                    <p><strong>Status:</strong> ${data.active ? 'Active' : 'Suspended'}</p>
+                `;
+                detailsDiv.innerHTML = details;
+            })
+            .catch(err => {
+                console.error('Error fetching fundraiser details:', err);
+                document.getElementById('fundraiser-details').innerHTML = '<p>Error loading fundraiser details</p>';
+            });
+    </script>
+</body>
+</html>

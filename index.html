@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crowdfunding Platform</title>
+    
+</head>
+<body>
+    <header>
+        <h1>Welcome to Our Crowdfunding Platform</h1>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="search.html">Search Fundraisers</a>
+        </nav>
+    </header>
+    
+    <section id="fundraiser-list">
+        <h2>Active Fundraisers</h2>
+        <div id="fundraisers"></div>
+    </section>
+
+    <script>
+        fetch('/api/fundraisers')
+            .then(response => response.json())
+            .then(data => {
+                let html = '';
+                data.forEach(fundraiser => {
+                    html += `<p><a href="fundraiser-details.html?id=${fundraiser.FUNDRAISER_ID}">
+                                ${fundraiser.caption} - ${fundraiser.city}</a></p>`;
+                });
+                document.getElementById('fundraisers').innerHTML = html;
+            });
+    </script>
+</body>
+</html>
