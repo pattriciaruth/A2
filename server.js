@@ -42,7 +42,7 @@ app.post('/api/search_fundraisers', (req, res) => {
     });
 });
 
-const PORT = 3306;
+const PORT = 3000;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
